@@ -23,14 +23,12 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Хеширование пароля
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		http.Error(w, "Failed to hash password", http.StatusInternalServerError)
 		return
 	}
 
-	// Сохранение пользователя
 	db := database.GetDB()
 	_, err = db.Exec(
 		"INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
@@ -59,7 +57,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Поиск пользователя
 	db := database.GetDB()
 	var user models.User
 	err := db.QueryRow(
@@ -76,13 +73,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Проверка пароля
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
 		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
 		return
 	}
 
-	// Генерация токена
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &models.JwtClaims{
 		UserID:   user.ID,
@@ -99,7 +94,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Ответ
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"token":      tokenString,
 		"expires_at": expirationTime.Unix(),
@@ -114,7 +108,6 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// В реальном приложении здесь была бы логика сброса пароля
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{
 		"message": "Password reset instructions sent if email exists",
