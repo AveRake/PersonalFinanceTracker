@@ -7,7 +7,7 @@ type BudgetItem struct {
 	UserID      int       `json:"user_id"`
 	Date        time.Time `json:"date"`
 	Name        string    `json:"name"`
-	Category    string    `json:"category"` // "income" или "expense"
+	Category    string    `json:"category"` 
 	Amount      float64   `json:"amount"`
 	Description string    `json:"description,omitempty"`
 }
