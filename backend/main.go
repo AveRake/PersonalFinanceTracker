@@ -11,19 +11,16 @@ import (
 )
 
 func main() {
-	// Инициализация БД
 	if _, err := database.InitDB(); err != nil {
 		log.Fatal("Database initialization failed:", err)
 	}
 
 	r := mux.NewRouter()
 
-	// Публичные маршруты
 	r.HandleFunc("/register", handlers.Register).Methods("POST")
 	r.HandleFunc("/login", handlers.Login).Methods("POST")
 	r.HandleFunc("/reset-password", handlers.ResetPassword).Methods("POST")
 
-	// Защищенные маршруты
 	api := r.PathPrefix("/api").Subrouter()
 	api.Use(middleware.JwtMiddleware)
 
