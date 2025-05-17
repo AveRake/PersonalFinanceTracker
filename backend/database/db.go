@@ -21,21 +21,17 @@ var (
 	dbOnce     sync.Once
 )
 
-// InitDB инициализирует соединение с базой данных
 func InitDB() (*sql.DB, error) {
 	var initErr error
 	dbOnce.Do(func() {
-		// Формирование строки подключения
 		dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s", username, password, hostname, dbname)
 
-		// Открытие соединения с базой данных
 		db, err := sql.Open("mysql", dsn)
 		if err != nil {
 			initErr = err
 			return
 		}
 
-		// Проверка соединения
 		err = db.Ping()
 		if err != nil {
 			initErr = err
@@ -49,7 +45,6 @@ func InitDB() (*sql.DB, error) {
 	return dbInstance, initErr
 }
 
-// GetDB возвращает экземпляр соединения с базой данных
 func GetDB() *sql.DB {
 	if dbInstance == nil {
 		log.Panic("База данных не инициализирована")
