@@ -14,7 +14,6 @@ const userIDKey = "userID"
 
 func JwtMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Пропускаем публичные эндпоинты
 		if r.URL.Path == "/register" || r.URL.Path == "/login" || r.URL.Path == "/reset-password" {
 			next.ServeHTTP(w, r)
 			return
@@ -44,7 +43,6 @@ func JwtMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// Добавляем userID в контекст
 		ctx := context.WithValue(r.Context(), userIDKey, claims.UserID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
