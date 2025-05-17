@@ -25,5 +25,5 @@ type BudgetResponse struct {
 	Name        string  `json:"name"`
 	Category    string  `json:"category"`
 	Amount      float64 `json:"amount"`
-	Description string  `json:"description,omitempty"` // omitempty - если пустое, не включать в JSON
+	Description string  `json:"description,omitempty"` 
 }
