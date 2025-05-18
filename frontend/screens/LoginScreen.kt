@@ -1,0 +1,151 @@
+package com.example.homebudget.screens
+
+import android.content.Context
+import android.util.Log
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import com.example.homebudget.UserSession
+import com.example.homebudget.api.ApiClient
+import com.example.homebudget.models.LoginRequest
+import kotlinx.coroutines.launch
+
+@Composable
+fun LoginScreen(
+    onLoginSuccess: (String) -> Unit,
+    onNavigateToRegister: () -> Unit
+) {
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Домашний бюджет",
+            style = MaterialTheme.typography.headlineMedium
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        OutlinedTextField(
+            value = username,
+            onValueChange = { username = it },
+            label = { Text("Логин") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Пароль") },
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        if (errorMessage != null) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = errorMessage!!,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = {
+                if (username.isBlank() || password.isBlank()) {
+                    errorMessage = "Заполните все поля"
+                    return@Button
+                }
+
+                isLoading = true
+                errorMessage = null
+
+                scope.launch {
+                    try {
+                        val response = ApiClient.apiService.login(
+                            LoginRequest(
+                                username = username,
+                                password = password
+                            )
+                        )
+
+                        if (response.isSuccessful) {
+                            response.body()?.let { authResponse ->
+                                // Сохраняем данные сессии
+                                UserSession.apply {
+                                    token = authResponse.token
+                                    userId = authResponse.user_id
+                                    expiresAt = authResponse.expires_at
+                                }
+                                onLoginSuccess(authResponse.token)
+                            } ?: run {
+                                errorMessage = "Ошибка: неверный формат ответа сервера"
+                                showToast(context, "Попробуйте позже")
+                            }
+                        } else {
+                            errorMessage = when (response.code()) {
+                                401 -> "Неверный логин или пароль"
+                                400 -> "Некорректные данные"
+                                500 -> "Ошибка сервера"
+                                else -> "Ошибка: ${response.code()}"
+                            }
+                        }
+                    } catch (e: Exception) {
+                        errorMessage = when {
+                            e.message?.contains("timeout") == true -> "Таймаут соединения"
+                            e.message?.contains("Unable to resolve host") == true -> "Проблемы с интернетом"
+                            else -> "Ошибка соединения"
+                        }
+                        Log.e("LoginError", "Ошибка входа", e)
+                        showToast(context, "Подробности в логах")
+                    } finally {
+                        isLoading = false
+                    }
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !isLoading
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator()
+            } else {
+                Text("Войти")
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        TextButton(
+            onClick = onNavigateToRegister,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Зарегистрироваться")
+        }
+    }
+}
+
+private fun showToast(context: Context, message: String) {
+    ContextCompat.getMainExecutor(context).execute {
+        android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_LONG).show()
+    }
+}
