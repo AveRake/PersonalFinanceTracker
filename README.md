@@ -1,11 +1,14 @@
 # Budget App - Personal Finance Manager
 
-![App Screenshot](screenshot.png)
+<div align="center">
+  <img src="ReadmePhotos/screenshot_login.png" width="49.5%"/>
+    <img src="ReadmePhotos/screenshot_main.png" width="49.5%"/>
+</div>
 
 ## 💻 Technology Stack
 
 ### Backend
-- **Node.js** (v18+)
+- **Node.js** (v18+)x
 - **Express** - web framework
 - **MySQL** - database
 - **JWT** - authentication
