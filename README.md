@@ -1,12 +1,14 @@
 # Budget App - Personal Finance Manager
+
 A modern mobile app for managing personal finances with secure cloud synchronization. Built with Node.js backend and Android (Jetpack Compose) client.
 
 <div align="center">
   <img src="ReadmePhotos/screenshot_login.png" width="49.5%"/>
-    <img src="ReadmePhotos/screenshot_main.png" width="49.5%"/>
+  <img src="ReadmePhotos/screenshot_main.png" width="49.5%"/>
 </div>
 
 ## Key Features
+
 - 💳 Expense tracking by categories
 - 🔐 JWT authentication
 - 📊 Financial insights and statistics
@@ -16,6 +18,7 @@ A modern mobile app for managing personal finances with secure cloud synchroniza
 ## 💻 Technology Stack
 
 ### Backend
+
 - **Node.js** (v18+)x
 - **Express** - web framework
 - **MySQL** - database
@@ -23,6 +26,7 @@ A modern mobile app for managing personal finances with secure cloud synchroniza
 - **XAMPP** - local server
 
 ### Android Client
+
 - **Kotlin**
 - **Jetpack Compose**
 - **Retrofit**
