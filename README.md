@@ -2,10 +2,10 @@
 
 A modern mobile app for managing personal finances with secure cloud synchronization. Built with Node.js backend and Android (Jetpack Compose) client.
 
-<div align="center">
-  <img src="ReadmePhotos/screenshot_login.png" width="49.5%"/>
-  <img src="ReadmePhotos/screenshot_main.png" width="49.5%"/>
-</div>
+<p align="center">
+  <img height="600em" alt="screenshot_login" src="https://github.com/user-attachments/assets/86aada49-5705-44e4-a67d-1c12fc931534" />
+  <img height="600em" alt="screenshot_main" src="https://github.com/user-attachments/assets/6bea63a0-b2d4-4d22-aa85-17d73a70c962" />
+</p>
 
 ## Key Features
 
